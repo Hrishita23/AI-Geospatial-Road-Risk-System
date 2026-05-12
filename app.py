@@ -35,7 +35,7 @@ state_mapping = {
 conn = sqlite3.connect("sql/road_risk.db")
 df = pd.read_sql_query("SELECT * FROM risk_data", conn)
 
-df = df.round(2)
+
 
 # Convert state codes to full names
 df["State"] = df["State"].map(state_mapping).fillna(df["State"])
