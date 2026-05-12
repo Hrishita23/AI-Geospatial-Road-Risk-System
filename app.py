@@ -10,7 +10,7 @@ st.set_page_config(page_title="Road Risk AI Dashboard", layout="wide")
 st.title("🚦 AI-Powered Road Accident Risk Dashboard")
 
 # -------------------------
-# State Mapping (Full Names)
+# State Mapping
 # -------------------------
 state_mapping = {
     "AL": "Alabama", "AK": "Alaska", "AZ": "Arizona", "AR": "Arkansas",
@@ -35,14 +35,13 @@ state_mapping = {
 conn = sqlite3.connect("sql/road_risk.db")
 df = pd.read_sql_query("SELECT * FROM risk_data", conn)
 
-# Convert abbreviations → full names
+# Convert state codes to full names
 df["State"] = df["State"].map(state_mapping).fillna(df["State"])
 
 # -------------------------
 # Filters
 # -------------------------
 state = st.selectbox("Select State", sorted(df["State"].unique()))
-
 filtered = df[df["State"] == state]
 
 # -------------------------
@@ -57,14 +56,11 @@ col2.metric("Max Accident Count", int(filtered["Predicted_Accident_Count"].max()
 col3.metric("Min Accident Count", int(filtered["Predicted_Accident_Count"].min()))
 
 # -------------------------
-# City-Level Table
+# Tables
 # -------------------------
 st.subheader("📍 City-Level Risk Data")
 st.dataframe(filtered, use_container_width=True)
 
-# -------------------------
-# Top Risky Cities
-# -------------------------
 st.subheader("🔥 Top High Risk Cities")
 st.dataframe(df.sort_values("Predicted_Accident_Count", ascending=False).head(10), use_container_width=True)
 
@@ -72,11 +68,10 @@ st.subheader("🟢 Top Low Risk Cities")
 st.dataframe(df.sort_values("Predicted_Accident_Count").head(10), use_container_width=True)
 
 # -------------------------
-# AI Explanation (FULL FIX - NO CUTTING)
+# AI Explanation (FINAL FIX - NO CUTTING EVER)
 # -------------------------
 st.subheader("🤖 AI Risk Explanation")
 
-# Replace this with your model/LLM output
 ai_explanation = """
 This region shows elevated accident risk due to high traffic density,
 frequent congestion during peak hours, and historical accident clusters.
@@ -87,28 +82,20 @@ Key insights:
 - High congestion during morning and evening peaks
 - Accident hotspots near urban intersections
 - Moderate weather-related impact
+- Weak traffic signal coordination
+- Increased accident probability during rainy conditions
 
 Recommendations:
 - Improve traffic signal timing
-- Install smart surveillance systems
-- Increase enforcement in high-risk zones
-- Use predictive monitoring for peak hours
+- Deploy smart surveillance systems
+- Strengthen enforcement in high-risk zones
+- Use predictive AI monitoring for peak hours
+- Upgrade road infrastructure in hotspot areas
 """
 
-def render_full_text(text):
-    return f"""
-    <div style="
-        white-space: pre-wrap;
-        font-size: 16px;
-        line-height: 1.6;
-        padding: 10px;
-        border-radius: 10px;
-        background-color: #111827;
-        color: #F9FAFB;
-    ">
-    {text}
-    </div>
-    """
-
 with st.expander("🧠 Click to view full AI explanation", expanded=True):
-    st.markdown(render_full_text(ai_explanation), unsafe_allow_html=True)
+    st.text_area(
+        label="AI Output",
+        value=ai_explanation,
+        height=300
+    )
