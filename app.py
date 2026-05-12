@@ -35,8 +35,6 @@ state_mapping = {
 conn = sqlite3.connect("sql/road_risk.db")
 df = pd.read_sql_query("SELECT * FROM risk_data", conn)
 
-
-
 # Convert state codes to full names
 df["State"] = df["State"].map(state_mapping).fillna(df["State"])
 
@@ -68,36 +66,3 @@ st.dataframe(df.sort_values("Predicted_Accident_Count", ascending=False).head(10
 
 st.subheader("🟢 Top Low Risk Cities")
 st.dataframe(df.sort_values("Predicted_Accident_Count").head(10), use_container_width=True)
-
-# -------------------------
-# AI Explanation (FINAL FIX - NO CUTTING EVER)
-# -------------------------
-st.subheader("🤖 AI Risk Explanation")
-
-ai_explanation = """
-This region shows elevated accident risk due to high traffic density,
-frequent congestion during peak hours, and historical accident clusters.
-
-Weather conditions, road quality, and traffic violations also contribute significantly.
-
-Key insights:
-- High congestion during morning and evening peaks
-- Accident hotspots near urban intersections
-- Moderate weather-related impact
-- Weak traffic signal coordination
-- Increased accident probability during rainy conditions
-
-Recommendations:
-- Improve traffic signal timing
-- Deploy smart surveillance systems
-- Strengthen enforcement in high-risk zones
-- Use predictive AI monitoring for peak hours
-- Upgrade road infrastructure in hotspot areas
-"""
-
-with st.expander("🧠 Click to view full AI explanation", expanded=True):
-    st.text_area(
-        label="AI Output",
-        value=ai_explanation,
-        height=300
-    )
