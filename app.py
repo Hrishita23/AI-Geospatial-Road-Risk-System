@@ -7,7 +7,7 @@ st.set_page_config(page_title="Road Risk AI Dashboard", layout="wide")
 st.title("🚦 AI-Powered Road Accident Risk Dashboard")
 
 # -------------------------
-# State mapping (US full names)
+# State mapping (full names)
 # -------------------------
 state_mapping = {
     "AL": "Alabama", "AK": "Alaska", "AZ": "Arizona", "AR": "Arkansas",
@@ -27,7 +27,7 @@ state_mapping = {
 }
 
 # -------------------------
-# Load SQLite data
+# Load data
 # -------------------------
 conn = sqlite3.connect("sql/road_risk.db")
 df = pd.read_sql_query("SELECT * FROM risk_data", conn)
@@ -54,7 +54,7 @@ col2.metric("Max Accident Count", int(filtered["Predicted_Accident_Count"].max()
 col3.metric("Min Accident Count", int(filtered["Predicted_Accident_Count"].min()))
 
 # -------------------------
-# Table
+# City Data Table
 # -------------------------
 st.subheader("📍 City-Level Risk Data")
 st.dataframe(filtered)
@@ -67,3 +67,23 @@ st.dataframe(df.sort_values("Predicted_Accident_Count", ascending=False).head(10
 
 st.subheader("🟢 Top Low Risk Cities")
 st.dataframe(df.sort_values("Predicted_Accident_Count").head(10))
+
+# -------------------------
+# AI Explanation Section (FIXED)
+# -------------------------
+st.subheader("🤖 AI Risk Explanation")
+
+# Replace this with your actual LLM/model output
+ai_explanation = """
+This region shows elevated accident risk due to high traffic density,
+frequent congestion during peak hours, and historical accident clusters.
+Weather conditions and road infrastructure also contribute moderately.
+
+Recommendation:
+- Improve traffic signal timing
+- Add road surveillance in hotspot areas
+- Increase awareness campaigns for drivers
+"""
+
+with st.expander("Click to view full AI explanation"):
+    st.markdown(ai_explanation)
