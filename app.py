@@ -2,16 +2,12 @@ import streamlit as st
 import pandas as pd
 import sqlite3
 
-# -------------------------
-# Page Config
-# -------------------------
+
 st.set_page_config(page_title="Road Risk AI Dashboard", layout="wide")
 
-st.title("🚦 AI-Powered Road Accident Risk Dashboard")
+st.title(" AI-Powered Road Accident Risk Dashboard")
 
-# -------------------------
-# State Mapping
-# -------------------------
+
 state_mapping = {
     "AL": "Alabama", "AK": "Alaska", "AZ": "Arizona", "AR": "Arkansas",
     "CA": "California", "CO": "Colorado", "CT": "Connecticut", "DE": "Delaware",
@@ -29,24 +25,18 @@ state_mapping = {
     "WI": "Wisconsin", "WY": "Wyoming"
 }
 
-# -------------------------
-# Load Data
-# -------------------------
+
 conn = sqlite3.connect("sql/road_risk.db")
 df = pd.read_sql_query("SELECT * FROM risk_data", conn)
 
-# Convert state codes to full names
+
 df["State"] = df["State"].map(state_mapping).fillna(df["State"])
 
-# -------------------------
-# Filters
-# -------------------------
+
 state = st.selectbox("Select State", sorted(df["State"].unique()))
 filtered = df[df["State"] == state]
 
-# -------------------------
-# KPIs
-# -------------------------
+
 st.subheader("📊 Key Metrics")
 
 col1, col2, col3 = st.columns(3)
@@ -55,14 +45,12 @@ col1.metric("Avg Accident Count", round(filtered["Predicted_Accident_Count"].mea
 col2.metric("Max Accident Count", int(filtered["Predicted_Accident_Count"].max()))
 col3.metric("Min Accident Count", int(filtered["Predicted_Accident_Count"].min()))
 
-# -------------------------
-# Tables
-# -------------------------
-st.subheader("📍 City-Level Risk Data")
+
+st.subheader(" City-Level Risk Data")
 st.dataframe(filtered, use_container_width=True)
 
-st.subheader("🔥 Top High Risk Cities")
+st.subheader(" Top High Risk Cities")
 st.dataframe(df.sort_values("Predicted_Accident_Count", ascending=False).head(10), use_container_width=True)
 
-st.subheader("🟢 Top Low Risk Cities")
+st.subheader(" Top Low Risk Cities")
 st.dataframe(df.sort_values("Predicted_Accident_Count").head(10), use_container_width=True)
